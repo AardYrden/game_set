@@ -240,6 +240,41 @@ public class GamePanel extends JPanel implements KeyListener {
         }
     }
 
+    private Font selectFont(int value) {
+        if (value < 10) return new Font("宋体", Font.BOLD, 46);
+        else if (value < 100) return new Font("宋体", Font.BOLD, 40);
+        else if (value < 1000) return new Font("宋体", Font.BOLD, 34);
+        else if (value < 10000) return new Font("宋体", Font.BOLD, 28);
+        else return new Font("宋体", Font.BOLD, 22);
+    }
+
+    private Color selectValueColor(int value) {
+        return switch (value) {
+            case 2, 4 -> Color.BLACK;
+            default -> Color.WHITE;
+        };
+    }
+
+    private Color selectBackColor(int value) {
+        return switch (value) {
+            case 0 -> new Color(0xcdc1b4);
+            case 2 -> new Color(0xeee4da);
+            case 4 -> new Color(0xede0c8);
+            case 8 -> new Color(0xf2b179);
+            case 16 -> new Color(0xf59563);
+            case 32 -> new Color(0xf67c5f);
+            case 64 -> new Color(0xf65e3b);
+            case 128 -> new Color(0xedcf72);
+            case 256 -> new Color(0xedcc61);
+            case 512 -> new Color(0xedc850);
+            case 1024 -> new Color(0xedc53f);
+            case 2048 -> new Color(0xedc22e);
+            case 4096 -> new Color(0x65da92);
+            case 8192 -> new Color(0x5abc65);
+            default -> new Color(0x248c51);
+        };
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponents(g);
@@ -250,8 +285,9 @@ public class GamePanel extends JPanel implements KeyListener {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                g2d.setColor(new Color(0xeee4da));
-
+                // 设置方块背景色
+                g2d.setColor(selectBackColor(val[i][j]));
+                // 绘制方块
                 g2d.fillRoundRect(
                         BLOCK_GAP + (BLOCK_GAP + BLOCK_SIZE) * j,
                         BLOCK_GAP + 100 + (BLOCK_GAP + BLOCK_SIZE) * i,
@@ -259,14 +295,18 @@ public class GamePanel extends JPanel implements KeyListener {
                         BLOCK_ARC, BLOCK_ARC
                 );
 
+                // 绘制数字
                 if (val[i][j] != 0) {
-                    g2d.setFont(new Font("宋体", Font.BOLD, 20));
+                    String value = String.valueOf(val[i][j]);
+                    Font font = selectFont(val[i][j]);
 
-                    g2d.setColor(Color.BLACK);
+                    g2d.setFont(font);
+                    g2d.setColor(selectValueColor(val[i][j]));
 
-                    g2d.drawString(val[i][j] + "",
-                            BLOCK_GAP + BLOCK_SIZE / 2 + (BLOCK_GAP + BLOCK_SIZE) * j,
-                            BLOCK_GAP + 100 + BLOCK_SIZE / 2 + (BLOCK_GAP + BLOCK_SIZE) * i
+                    FontMetrics metrics = getFontMetrics(font);
+                    g2d.drawString(value,
+                            BLOCK_GAP + (BLOCK_SIZE - metrics.stringWidth(value)) / 2 + (BLOCK_GAP + BLOCK_SIZE) * j,
+                            BLOCK_GAP + 100 + metrics.getAscent() + (BLOCK_SIZE - metrics.getAscent() - metrics.getDescent()) / 2 + (BLOCK_GAP + BLOCK_SIZE) * i
                     );
                 }
             }
@@ -281,7 +321,7 @@ public class GamePanel extends JPanel implements KeyListener {
             g.setFont(new Font("黑体", Font.BOLD, 30));
             FontMetrics fms = getFontMetrics(new Font("黑体", Font.BOLD, 30));
             String value = "Game Over!";
-            g.drawString(value, (getWidth()-fms.stringWidth(value)) / 2, getHeight() / 2);
+            g.drawString(value, (getWidth() - fms.stringWidth(value)) / 2, getHeight() / 2);
         }
     }
 
