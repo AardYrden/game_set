@@ -1,7 +1,9 @@
 package com.aard;
 
+import com.aard._2048.GamePanel;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        new GamePanel();
     }
 }
